@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+.pnp/
+
+# builds
+dist/
+build/
+mobile/android/
+mobile/ios/
+*.apk
+*.aab
+
+# secrets and env
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# java
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# expo
+.expo/
+*.log
+
+# python/other caches
+__pycache__/
+.freebuff/

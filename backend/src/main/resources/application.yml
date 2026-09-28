@@ -1,0 +1,71 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: velaiconnect-backend
+  datasource:
+    url: ${SUPABASE_DB_URL:jdbc:postgresql://db.YOUR-PROJECT.supabase.co:5432/postgres}
+    username: ${SUPABASE_DB_USER:postgres}
+    password: ${SUPABASE_DB_PASSWORD:your-supabase-db-password}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+
+# ---- JWT ----
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-please-generate-a-long-random-256-bit-secret-key}
+    access-token-expiry-ms: 3600000        # 1 hour
+    refresh-token-expiry-ms: 2592000000    # 30 days
+  otp:
+    length: 6
+    expiry-minutes: 5
+    max-attempts: 5
+    max-sends-per-hour: 5
+    # Dev mode: when no SMS provider configured, OTP is returned in the API
+    # response and logged to console (DEV ONLY – never in production).
+    dev-bypass: ${OTP_DEV_MODE:true}
+    sms:
+      provider: ${SMS_PROVIDER:none}       # none | twilio | msg91 | fast2sms
+      twilio:
+        account-sid: ${TWILIO_ACCOUNT_SID:}
+        auth-token: ${TWILIO_AUTH_TOKEN:}
+        from-number: ${TWILIO_FROM_NUMBER:}
+      msg91:
+        auth-key: ${MSG91_AUTH_KEY:}
+        template-id: ${MSG91_TEMPLATE_ID:}
+      fast2sms:
+        api-key: ${FAST2SMS_API_KEY:}
+  supabase:
+    url: ${SUPABASE_URL:https://YOUR-PROJECT.supabase.co}
+    service-key: ${SUPABASE_SERVICE_KEY:}
+    storage:
+      endpoint: ${SUPABASE_S3_ENDPOINT:https://YOUR-PROJECT.supabase.co/storage/v1/s3}
+      access-key: ${SUPABASE_S3_ACCESS_KEY:}
+      secret-key: ${SUPABASE_S3_SECRET_KEY:}
+      region: ${SUPABASE_S3_REGION:ap-south-1}
+      bucket-resumes: resumes
+      bucket-profile-images: profile-images
+      bucket-company-logos: company-logos
+      bucket-verification-docs: verification-docs
+  firebase:
+    enabled: ${FIREBASE_ENABLED:false}
+    credentials-json: ${FIREBASE_CREDENTIALS_JSON:}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:19006,http://localhost:5173}
+
+logging:
+  level:
+    com.velaiconnect: INFO
+    org.hibernate.SQL: WARN

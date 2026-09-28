@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "VelaiConnect",
+    "slug": "velaiconnect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0B5FFF"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.velaiconnect.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "VelaiConnect uses your location to show jobs near you.",
+        "NSPhotoLibraryUsageDescription": "VelaiConnect needs photo access to upload your profile photo or company logo."
+      }
+    },
+    "android": {
+      "package": "com.velaiconnect.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0B5FFF"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "extra": {
+      "apiBaseUrl": "http://10.0.2.2:8080/api/v1",
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}
