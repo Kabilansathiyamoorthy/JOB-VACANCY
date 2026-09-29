@@ -41,16 +41,20 @@ jobs:
         working-directory: mobile
         run: npx expo prebuild --platform android --no-install
 
-      - name: Bundle JavaScript for standalone APK
-        working-directory: mobile
-        run: npx expo export:embed --platform android --dev false --entry-file index.ts --bundle-output android/app/build/generated/assets/react/debug/index.android.bundle --assets-dest android/app/build/generated/res/react/debug
-
-      - name: Build standalone debug APK
+      - name: Build standalone release APK
         working-directory: mobile/android
-        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+        run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon
+
+      - name: Sign release APK for installation
+        working-directory: mobile/android
+        shell: bash
+        run: |
+          unsigned_apk=$(find app/build/outputs/apk/release -name '*unsigned*.apk' | head -n 1)
+          apksigner=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort | tail -n 1)
+          "$apksigner" sign --ks "$HOME/.android/debug.keystore" --ks-pass pass:android --key-pass pass:android --ks-key-alias AndroidDebugKey --out app/build/outputs/apk/release/app-release.apk "$unsigned_apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: velaiconnect-debug-apk
-          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          name: velaiconnect-release-apk
+          path: mobile/android/app/build/outputs/apk/release/app-release.apk
