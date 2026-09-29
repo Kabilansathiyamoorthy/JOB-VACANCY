@@ -52,9 +52,28 @@ jobs:
         working-directory: mobile/android
         shell: bash
         run: |
-          unsigned_apk=$(find app/build/outputs/apk/release -name '*unsigned*.apk' | head -n 1)
+          apk_dir=app/build/outputs/apk/release
+          unsigned_apk=$(find "$apk_dir" -type f -name '*unsigned*.apk' -print -quit)
+          if [[ -z "$unsigned_apk" ]]; then
+            unsigned_apk=$(find "$apk_dir" -maxdepth 1 -type f -name '*.apk' -print -quit)
+          fi
+          if [[ -z "$unsigned_apk" ]]; then
+            echo "No release APK found in $apk_dir"
+            find app/build/outputs -type f -print || true
+            exit 1
+          fi
+
           apksigner=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort | tail -n 1)
-          "$apksigner" sign --ks "$RUNNER_TEMP/debug.keystore" --ks-pass pass:android --key-pass pass:android --ks-key-alias AndroidDebugKey --out app/build/outputs/apk/release/app-release.apk "$unsigned_apk"
+          if "$apksigner" verify "$unsigned_apk" >/dev/null 2>&1; then
+            if [[ "$unsigned_apk" != "$apk_dir/app-release.apk" ]]; then
+              cp "$unsigned_apk" "$apk_dir/app-release.apk"
+            fi
+          else
+            signed_apk="$RUNNER_TEMP/app-release.apk"
+            "$apksigner" sign --ks "$RUNNER_TEMP/debug.keystore" --ks-pass pass:android --key-pass pass:android --ks-key-alias AndroidDebugKey --out "$signed_apk" "$unsigned_apk"
+            mv "$signed_apk" "$apk_dir/app-release.apk"
+          fi
+          "$apksigner" verify "$apk_dir/app-release.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
